@@ -73,6 +73,11 @@ import org.springframework.web.context.WebApplicationContext;
  * @since 2.0.0
  * @see #configure(SpringApplicationBuilder)
  */
+
+/**
+ * 实现此接口的springboot入口类  再启动tomcat容器的时候会此类的实例
+ * @SpringServletContainerInitializer META-INF/services/javax.servlet.ServletContainerInitializer
+ */
 public abstract class SpringBootServletInitializer implements WebApplicationInitializer {
 
 	protected Log logger; // Don't initialize early

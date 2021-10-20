@@ -56,12 +56,17 @@ import org.springframework.util.ClassUtils;
 public class AnnotationConfigServletWebServerApplicationContext extends ServletWebServerApplicationContext
 		implements AnnotationConfigRegistry {
 
+
 	private final AnnotatedBeanDefinitionReader reader;
 
 	private final ClassPathBeanDefinitionScanner scanner;
-
+	/**
+	 * 需要被 {@link #reader} 读取的注册类们
+	 */
 	private final Set<Class<?>> annotatedClasses = new LinkedHashSet<>();
-
+	/**
+	 * 需要被 {@link #scanner} 扫描的包
+	 */
 	private String[] basePackages;
 
 	/**
@@ -95,7 +100,9 @@ public class AnnotationConfigServletWebServerApplicationContext extends ServletW
 	 */
 	public AnnotationConfigServletWebServerApplicationContext(Class<?>... annotatedClasses) {
 		this();
+		// <1> 注册指定的注解的类们
 		register(annotatedClasses);
+		// 初始化 Spring 容器
 		refresh();
 	}
 
@@ -107,7 +114,10 @@ public class AnnotationConfigServletWebServerApplicationContext extends ServletW
 	 */
 	public AnnotationConfigServletWebServerApplicationContext(String... basePackages) {
 		this();
+		// <2> 扫描指定包
 		scan(basePackages);
+		// 初始化 Spring 容器
+
 		refresh();
 	}
 
@@ -158,7 +168,7 @@ public class AnnotationConfigServletWebServerApplicationContext extends ServletW
 		this.scanner.setScopeMetadataResolver(scopeMetadataResolver);
 	}
 
-	/**
+	/**  实现自 AnnotationConfigRegistry 接口
 	 * Register one or more annotated classes to be processed. Note that
 	 * {@link #refresh()} must be called in order for the context to fully process the new
 	 * class.
@@ -189,18 +199,29 @@ public class AnnotationConfigServletWebServerApplicationContext extends ServletW
 		this.basePackages = basePackages;
 	}
 
+	/**
+	 *  实现自 AbstractApplicationContext 抽象类
+	 */
 	@Override
 	protected void prepareRefresh() {
+		// 清空 scanner 的缓存
 		this.scanner.clearCache();
 		super.prepareRefresh();
 	}
 
+	/**
+	 *  实现自 AbstractApplicationContext 抽象类  是容器刷新前的动作
+	 * @param beanFactory
+	 */
 	@Override
 	protected void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) {
+		// 调用父类
 		super.postProcessBeanFactory(beanFactory);
+		// 扫描指定的包 加载bean定义
 		if (this.basePackages != null && this.basePackages.length > 0) {
 			this.scanner.scan(this.basePackages);
 		}
+		//直接注册指定类型的bean 加载bean定义
 		if (!this.annotatedClasses.isEmpty()) {
 			this.reader.register(ClassUtils.toClassArray(this.annotatedClasses));
 		}

@@ -38,6 +38,9 @@ class WebServerStartStopLifecycle implements SmartLifecycle {
 		this.webServer = webServer;
 	}
 
+	/**
+	 * 启动内嵌tomcat
+	 */
 	@Override
 	public void start() {
 		this.webServer.start();
@@ -46,6 +49,9 @@ class WebServerStartStopLifecycle implements SmartLifecycle {
 				.publishEvent(new ServletWebServerInitializedEvent(this.webServer, this.applicationContext));
 	}
 
+	/**
+	 * 关闭内嵌tomcat
+	 */
 	@Override
 	public void stop() {
 		this.webServer.stop();

@@ -43,12 +43,14 @@ public class WebApplicationContextServletContextAwareProcessor extends ServletCo
 
 	@Override
 	protected ServletContext getServletContext() {
+		//从webApplicationContext中获取servletContext 然后赋值到实现ServletContextAware接口setServletContext的方法的类中
 		ServletContext servletContext = this.webApplicationContext.getServletContext();
 		return (servletContext != null) ? servletContext : super.getServletContext();
 	}
 
 	@Override
 	protected ServletConfig getServletConfig() {
+		//从webApplicationContext中获取servletConfig 然后赋值到实现ServletConfigAware接口setServletConfig的方法的类中
 		ServletConfig servletConfig = this.webApplicationContext.getServletConfig();
 		return (servletConfig != null) ? servletConfig : super.getServletConfig();
 	}

@@ -29,7 +29,8 @@ import org.springframework.context.ConfigurableApplicationContext;
 public interface ConfigurableWebServerApplicationContext
 		extends ConfigurableApplicationContext, WebServerApplicationContext {
 
-	/**
+	/** 设置上下文的服务器命名空间。
+	 *
 	 * Set the server namespace of the context.
 	 * @param serverNamespace the server namespace
 	 * @see #getServerNamespace()

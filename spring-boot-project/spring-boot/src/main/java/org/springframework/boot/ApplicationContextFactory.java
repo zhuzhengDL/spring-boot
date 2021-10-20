@@ -43,12 +43,16 @@ public interface ApplicationContextFactory {
 	 */
 	ApplicationContextFactory DEFAULT = (webApplicationType) -> {
 		try {
+			// 根据 webApplicationType 类型，获得 ApplicationContext 类型
 			switch (webApplicationType) {
 			case SERVLET:
+				// 创建 AnnotationConfigServletWebServerApplicationContext 对象
 				return new AnnotationConfigServletWebServerApplicationContext();
 			case REACTIVE:
+				// 创建 AnnotationConfigReactiveWebServerApplicationContext 对象
 				return new AnnotationConfigReactiveWebServerApplicationContext();
 			default:
+				//AnnotationConfigApplicationContext  非web项目
 				return new AnnotationConfigApplicationContext();
 			}
 		}

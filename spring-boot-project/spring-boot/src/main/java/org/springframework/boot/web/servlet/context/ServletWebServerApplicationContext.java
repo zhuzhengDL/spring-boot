@@ -171,7 +171,7 @@ public class ServletWebServerApplicationContext extends GenericWebApplicationCon
 		// <1> 调用父方法
 		super.onRefresh();
 		try {
-			// 创建 WebServer
+			// 创建 WebServer //第二层的入口
 			createWebServer();
 		}
 		catch (Throwable ex) {
@@ -198,7 +198,8 @@ public class ServletWebServerApplicationContext extends GenericWebApplicationCon
 			createWebServer.tag("factory", factory.getClass().toString());
 			// <1.2> 获得 ServletContextInitializer 对象
 			// <1.3> 创建（获得） WebServer 对象
-			this.webServer = factory.getWebServer(getSelfInitializer());
+			WebServer webServer1 = factory.getWebServer(getSelfInitializer());
+			this.webServer = webServer1; // 第三层的入口
 			createWebServer.end();
 			getBeanFactory().registerSingleton("webServerGracefulShutdown",
 					new WebServerGracefulShutdownLifecycle(this.webServer));
@@ -270,6 +271,7 @@ public class ServletWebServerApplicationContext extends GenericWebApplicationCon
 		//方便从容器中取这些给需要的组件赋值   例如实现了servletContextAware接口的bean
 		WebApplicationContextUtils.registerEnvironmentBeans(getBeanFactory(), servletContext);
 		// <4> 获得所有 ServletContextInitializer(加载 Servlet 和 Filter/Listener 的) ，并逐个进行启动,将Servlet 和 Filter/Listener添加到ServeltContext中
+		// 第四层的入口
 		for (ServletContextInitializer beans : getServletContextInitializerBeans()) {
 			beans.onStartup(servletContext);
 		}
@@ -290,7 +292,10 @@ public class ServletWebServerApplicationContext extends GenericWebApplicationCon
 		existingScopes.restore();
 	}
 
-	/**
+	/** 返回应与嵌入式 Web 服务器一起使用的 {@link ServletContextInitializer}。默认情况下，
+	 * 此方法将首先尝试查找 {@link ServletContextInitializer}、{@link Servlet}、{@link Filter}
+	 * 和某些 {@link EventListener} bean。
+	 *
 	 * Returns {@link ServletContextInitializer}s that should be used with the embedded
 	 * web server. By default this method will first attempt to find
 	 * {@link ServletContextInitializer}, {@link Servlet}, {@link Filter} and certain

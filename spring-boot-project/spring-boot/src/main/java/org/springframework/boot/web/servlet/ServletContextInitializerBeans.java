@@ -84,7 +84,7 @@ public class ServletContextInitializerBeans extends AbstractCollection<ServletCo
 		this.initializerTypes = (initializerTypes.length != 0) ? Arrays.asList(initializerTypes)
 				: Collections.singletonList(ServletContextInitializer.class);
 		//加载ServletContextInitializer
-		addServletContextInitializerBeans(beanFactory);
+		addServletContextInitializerBeans(beanFactory); // 第六层的入口
 		//加载Servlet、Filter、EventListener
 		addAdaptableBeans(beanFactory);
 		List<ServletContextInitializer> sortedInitializers = this.initializers.values().stream()

@@ -25,6 +25,7 @@ import javax.servlet.ServletException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.boot.web.servlet.ServletContextInitializer;
 
 /**
@@ -42,6 +43,8 @@ class TomcatStarter implements ServletContainerInitializer {
 
 	private volatile Exception startUpException;
 
+	//封装ServletContextInitializer的实现类  FilterRegistrationBean ServletRegistrationBean ServletListenerRegistrationBean
+
 	TomcatStarter(ServletContextInitializer[] initializers) {
 		this.initializers = initializers;
 	}
@@ -50,6 +53,7 @@ class TomcatStarter implements ServletContainerInitializer {
 	public void onStartup(Set<Class<?>> classes, ServletContext servletContext) throws ServletException {
 		try {
 			for (ServletContextInitializer initializer : this.initializers) {
+				//调用FilterRegistrationBean ServletRegistrationBean ServletListenerRegistrationBean startup方法注册Servlet、Filter、ServletListener
 				initializer.onStartup(servletContext);
 			}
 		}

@@ -357,7 +357,9 @@ public class TomcatServletWebServerFactory extends AbstractServletWebServerFacto
 	 * @param initializers initializers to apply
 	 */
 	protected void configureContext(Context context, ServletContextInitializer[] initializers) {
+		// <1>
 		TomcatStarter starter = new TomcatStarter(initializers);
+		// <2>
 		if (context instanceof TomcatEmbeddedContext) {
 			TomcatEmbeddedContext embeddedContext = (TomcatEmbeddedContext) context;
 			embeddedContext.setStarter(starter);

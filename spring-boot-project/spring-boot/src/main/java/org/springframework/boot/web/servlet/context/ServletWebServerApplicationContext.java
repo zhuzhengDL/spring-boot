@@ -198,8 +198,7 @@ public class ServletWebServerApplicationContext extends GenericWebApplicationCon
 			createWebServer.tag("factory", factory.getClass().toString());
 			// <1.2> 获得 ServletContextInitializer 对象
 			// <1.3> 创建（获得） WebServer 对象
-			WebServer webServer1 = factory.getWebServer(getSelfInitializer());
-			this.webServer = webServer1; // 第三层的入口
+			this.webServer = factory.getWebServer(getSelfInitializer()); // 第三层的入口
 			createWebServer.end();
 			getBeanFactory().registerSingleton("webServerGracefulShutdown",
 					new WebServerGracefulShutdownLifecycle(this.webServer));

@@ -43,23 +43,42 @@ public class DelegatingApplicationContextInitializer
 		implements ApplicationContextInitializer<ConfigurableApplicationContext>, Ordered {
 
 	// NOTE: Similar to org.springframework.web.context.ContextLoader
-
+	/**
+	 * 环境变量配置的属性
+ 	 */
 	private static final String PROPERTY_NAME = "context.initializer.classes";
 
+	/**
+	 * 默认优先级
+	 */
 	private int order = 0;
+
+
+	public void setOrder(int order) {
+		this.order = order;
+	}
+
+	@Override
+	public int getOrder() {
+		return this.order;
+	}
 
 	@Override
 	public void initialize(ConfigurableApplicationContext context) {
 		ConfigurableEnvironment environment = context.getEnvironment();
+		// <1> 获得环境变量配置的 ApplicationContextInitializer 集合们
 		List<Class<?>> initializerClasses = getInitializerClasses(environment);
 		if (!initializerClasses.isEmpty()) {
+			// <2>如果非空，则进行初始化的应用
 			applyInitializerClasses(context, initializerClasses);
 		}
 	}
 
 	private List<Class<?>> getInitializerClasses(ConfigurableEnvironment env) {
+		// 获得环境变量配置的属性
 		String classNames = env.getProperty(PROPERTY_NAME);
 		List<Class<?>> classes = new ArrayList<>();
+		// 拼装成数组，按照 ，分隔
 		if (StringUtils.hasLength(classNames)) {
 			for (String className : StringUtils.tokenizeToStringArray(classNames, ",")) {
 				classes.add(getInitializerClass(className));
@@ -70,6 +89,7 @@ public class DelegatingApplicationContextInitializer
 
 	private Class<?> getInitializerClass(String className) throws LinkageError {
 		try {
+			// 获得全类名，对应的类
 			Class<?> initializerClass = ClassUtils.forName(className, ClassUtils.getDefaultClassLoader());
 			Assert.isAssignable(ApplicationContextInitializer.class, initializerClass);
 			return initializerClass;
@@ -82,12 +102,14 @@ public class DelegatingApplicationContextInitializer
 	private void applyInitializerClasses(ConfigurableApplicationContext context, List<Class<?>> initializerClasses) {
 		Class<?> contextClass = context.getClass();
 		List<ApplicationContextInitializer<?>> initializers = new ArrayList<>();
+		// 遍历 initializerClasses 数组，创建对应的 ApplicationContextInitializer 对象们 <1>
 		for (Class<?> initializerClass : initializerClasses) {
 			initializers.add(instantiateInitializer(contextClass, initializerClass));
 		}
+		// 执行 ApplicationContextInitializer 们的初始化逻辑 <2>
 		applyInitializers(context, initializers);
 	}
-
+   // 被 <1>处调用
 	private ApplicationContextInitializer<?> instantiateInitializer(Class<?> contextClass, Class<?> initializerClass) {
 		Class<?> requireContextClass = GenericTypeResolver.resolveTypeArgument(initializerClass,
 				ApplicationContextInitializer.class);
@@ -98,7 +120,7 @@ public class DelegatingApplicationContextInitializer
 						initializerClass.getName(), requireContextClass.getName(), contextClass.getName()));
 		return (ApplicationContextInitializer<?>) BeanUtils.instantiateClass(initializerClass);
 	}
-
+   // 被 <2> 处调用
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private void applyInitializers(ConfigurableApplicationContext context,
 			List<ApplicationContextInitializer<?>> initializers) {
@@ -106,15 +128,6 @@ public class DelegatingApplicationContextInitializer
 		for (ApplicationContextInitializer initializer : initializers) {
 			initializer.initialize(context);
 		}
-	}
-
-	public void setOrder(int order) {
-		this.order = order;
-	}
-
-	@Override
-	public int getOrder() {
-		return this.order;
 	}
 
 }

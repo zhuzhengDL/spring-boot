@@ -54,6 +54,9 @@ import org.springframework.core.type.classreading.MetadataReaderFactory;
 class SharedMetadataReaderFactoryContextInitializer
 		implements ApplicationContextInitializer<ConfigurableApplicationContext>, Ordered {
 
+	/**
+	 *  创建的 CachingMetadataReaderFactory 的 Bean 名字
+	 */
 	public static final String BEAN_NAME = "org.springframework.boot.autoconfigure."
 			+ "internalCachingMetadataReaderFactory";
 

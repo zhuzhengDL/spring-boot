@@ -681,7 +681,7 @@ public class SpringApplication {
 		}
 	}
 
-	/**
+	/** 在刷新ApplicationContext之前将任何 {@link ApplicationContextInitializer} 应用于上下文。
 	 * Apply any {@link ApplicationContextInitializer}s to the context before it is
 	 * refreshed.
 	 * @param context the configured ApplicationContext (not refreshed yet)

@@ -58,11 +58,14 @@ public class FileEncodingApplicationListener
 	@Override
 	public void onApplicationEvent(ApplicationEnvironmentPreparedEvent event) {
 		ConfigurableEnvironment environment = event.getEnvironment();
+		// 如果未配置，则不进行检查
 		String desired = environment.getProperty("spring.mandatory-file-encoding");
 		if (desired == null) {
 			return;
 		}
 		String encoding = System.getProperty("file.encoding");
+		// 比对系统变量的 `file.encoding` ，和环境变量的 `spring.mandatory-file-encoding` 。
+		// 如果不一致，抛出 IllegalStateException 异常
 		if (encoding != null && !desired.equalsIgnoreCase(encoding)) {
 			if (logger.isErrorEnabled()) {
 				logger.error("System property 'file.encoding' is currently '" + encoding + "'. It should be '" + desired

@@ -175,7 +175,7 @@ public class SpringApplication {
 	static final SpringApplicationShutdownHook shutdownHook = new SpringApplicationShutdownHook();
 
 	/**
-	 * 主要的 Java Config 类的数组
+	 * 基本的 Java Config 类的数组  默认就是启动类
 	 */
 	private Set<Class<?>> primarySources;
 
@@ -338,7 +338,7 @@ public class SpringApplication {
 			// <6> 创建 Spring 容器。
 			context = createApplicationContext();
 			context.setApplicationStartup(this.applicationStartup);
-			// <8> 主要是调用所有初始化类的 initialize 方法
+			// <8> 主要是调用所有初始化类的 initialize 方法，注入启动类到容器，为后续扫描注册bean奠定基础
 			prepareContext(bootstrapContext, context, environment, listeners, applicationArguments, printedBanner);
 			// <9> 刷新 Spring 容器。最核心
 			refreshContext(context);
@@ -451,10 +451,10 @@ public class SpringApplication {
 			context.addBeanFactoryPostProcessor(new LazyInitializationBeanFactoryPostProcessor());
 		}
 		// Load the sources
-		//获取bean定义资源的列表
+		//获取bean定义资源的列表  run方法支持的类参数  一般就是启动类
 		Set<Object> sources = getAllSources();
 		Assert.notEmpty(sources, "Sources must not be empty");
-		// <7> 加载 BeanDefinition 们
+		// <7> 加载 BeanDefinition 们（主要是将启动类注册到容器,方便后续扫描启动类目录下的所有bean）
 		load(context, sources.toArray(new Object[0]));
 		// <8> 通知 SpringApplicationRunListener 的数组，Spring 容器加载完成。
 		listeners.contextLoaded(context);
@@ -763,7 +763,7 @@ public class SpringApplication {
 		if (this.environment != null) {
 			loader.setEnvironment(this.environment);
 		}
-		// <3> 执行 BeanDefinition 加载
+		// <3> 执行 BeanDefinition 加载  主要目的是将启动配置类注入到容器
 		loader.load();
 	}
 
@@ -1241,8 +1241,10 @@ public class SpringApplication {
 	public Set<Object> getAllSources() {
 		Set<Object> allSources = new LinkedHashSet<>();
 		if (!CollectionUtils.isEmpty(this.primarySources)) {
+			//将启动配置类加入
 			allSources.addAll(this.primarySources);
 		}
+		//将特殊指定的来源加入
 		if (!CollectionUtils.isEmpty(this.sources)) {
 			allSources.addAll(this.sources);
 		}

@@ -91,11 +91,13 @@ public abstract class AutoConfigurationPackages {
 	 * @param packageNames the package names to set
 	 */
 	public static void register(BeanDefinitionRegistry registry, String... packageNames) {
+		// <1> 如果已经存在该 BEAN ，则修改其包（package）属性
 		if (registry.containsBeanDefinition(BEAN)) {
 			BasePackagesBeanDefinition beanDefinition = (BasePackagesBeanDefinition) registry.getBeanDefinition(BEAN);
 			beanDefinition.addBasePackages(packageNames);
 		}
 		else {
+			// <2> 如果不存在该 BEAN ，则创建一个 Bean ，并进行注册
 			registry.registerBeanDefinition(BEAN, new BasePackagesBeanDefinition(packageNames));
 		}
 	}
@@ -122,7 +124,9 @@ public abstract class AutoConfigurationPackages {
 	 * Wrapper for a package import.
 	 */
 	private static final class PackageImports {
-
+		/**
+		 * 包名
+		 */
 		private final List<String> packageNames;
 
 		PackageImports(AnnotationMetadata metadata) {

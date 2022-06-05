@@ -46,8 +46,8 @@ public @interface EnableConfigurationProperties {
 	 */
 	String VALIDATOR_BEAN_NAME = "configurationPropertiesValidator";
 
-	/**
-	 * Convenient way to quickly register
+	/**  指定的类们
+	 * Convenient way to quickly register  快速注册的便捷方式
 	 * {@link ConfigurationProperties @ConfigurationProperties} annotated beans with
 	 * Spring. Standard Spring Beans will also be scanned regardless of this value.
 	 * @return {@code @ConfigurationProperties} annotated beans to register

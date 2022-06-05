@@ -75,6 +75,7 @@ public class ConfigurationPropertiesBindingPostProcessor
 
 	@Override
 	public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
+	//	将配置文件注入到 `@ConfigurationProperties` 注解的 Bean 的属性中
 		bind(ConfigurationPropertiesBean.get(this.applicationContext, bean, beanName));
 		return bean;
 	}

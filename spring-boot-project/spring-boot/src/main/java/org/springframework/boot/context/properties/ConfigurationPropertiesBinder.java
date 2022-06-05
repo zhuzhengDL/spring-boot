@@ -55,6 +55,9 @@ import org.springframework.validation.Validator;
 import org.springframework.validation.annotation.Validated;
 
 /**
+ * {@link ConfigurationPropertiesBindingPostProcessor} 使用的内部类
+ *  处理实际的 {@link ConfigurationProperties @ConfigurationProperties} 绑定。
+ *
  * Internal class used by the {@link ConfigurationPropertiesBindingPostProcessor} to
  * handle the actual {@link ConfigurationProperties @ConfigurationProperties} binding.
  *
@@ -89,9 +92,13 @@ class ConfigurationPropertiesBinder {
 	}
 
 	BindResult<?> bind(ConfigurationPropertiesBean propertiesBean) {
+		//目标对象
 		Bindable<?> target = propertiesBean.asBindTarget();
+		//获得 @ConfigurationProperties 注解的属性
 		ConfigurationProperties annotation = propertiesBean.getAnnotation();
+		// 获得 BindHandler 对象
 		BindHandler bindHandler = getBindHandler(target, annotation);
+		//获得 Binder 对象，然后执行绑定逻辑，处理 `@ConfigurationProperties` 注解的 Bean 的属性的注入
 		return getBinder().bind(annotation.prefix(), target, bindHandler);
 	}
 
@@ -112,6 +119,7 @@ class ConfigurationPropertiesBinder {
 	private <T> BindHandler getBindHandler(Bindable<T> target, ConfigurationProperties annotation) {
 		List<Validator> validators = getValidators(target);
 		BindHandler handler = getHandler();
+		// 来源一，configurationPropertiesValidator
 		handler = new ConfigurationPropertiesBindHandler(handler);
 		if (annotation.ignoreInvalidFields()) {
 			handler = new IgnoreErrorsBindHandler(handler);
